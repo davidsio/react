@@ -6,14 +6,14 @@ import { StyleSheet, View, Text} from 'react-native';
 
 export default class SecondPage extends Component {
   static navigationOptions = {
-    title: 'Second Page',
+    title: 'Liste des promotions',
     //Sets Header text of Status Bar
   };
   render() {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
-        <Text>You are on SecondPage</Text>
+        <Text>Liste des promotions</Text>
       </View>
     );
   }

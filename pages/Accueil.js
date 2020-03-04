@@ -5,10 +5,35 @@ import React, { Component } from 'react';
 import { Text, View, Linking, TouchableHighlight, PermissionsAndroid, Platform, StyleSheet, Button} from 'react-native';
 // import all basic components
 import { CameraKitCameraScreen, } from 'react-native-camera-kit';
+import AsyncStorage from '@react-native-community/async-storage';
+let nbDatas = 0;
+let nbKey = '';
+const saveCode = async (value) =>{
+  try {
+    getAllData()
+    nbKey = nbDatas + "";
+    nbDatas++;
+    await AsyncStorage.setItem(nbKey, value);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const getAllData = () =>{
+  AsyncStorage.getAllKeys().then((keys) => {
+    return AsyncStorage.multiGet(keys)
+      .then((result) => {
+        //nbDatas =  result;
+      }).catch((e) =>{
+        console.log(e);
+      });
+  });
+}
+
 //import CameraKitCameraScreen we are going to use.
 export default class App extends Component {
 static navigationOptions = {
-    title: 'First Page',
+    title: 'Accueil',
     //Sets Header text of Status Bar
     headerStyle: {
         backgroundColor: '#f4511e',
@@ -36,6 +61,7 @@ static navigationOptions = {
   }
   onBarcodeScan(qrvalue) {
     //called after te successful scanning of QRCode/Barcode
+    saveCode(qrvalue);
     this.setState({ qrvalue: qrvalue });
     this.setState({ opneScanner: false });
   }
@@ -96,7 +122,15 @@ static navigationOptions = {
             </TouchableHighlight>
 
             <TouchableHighlight
-              onPress={() => navigate('SecondPage')}
+              onPress={() => navigate('Promotions')}
+              style={styles.button}>
+                <Text style={{ color: '#FFFFFF', fontSize: 12 }}>
+                Promotions en cours
+                </Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              onPress={() => navigate('Historique')}
               style={styles.button}>
                 <Text style={{ color: '#FFFFFF', fontSize: 12 }}>
                 Historique
@@ -105,9 +139,13 @@ static navigationOptions = {
         </View>
       );
     }
+
+    
     return (
       <View style={{ flex: 1 }}>
         <CameraKitCameraScreen
+          actions={{ leftButtonText: 'Annuler' }}
+          onBottomButtonPressed={event => this.setState({ opneScanner: false })}
           showFrame={false}
           //Show/hide scan frame
           scanBarcode={true}
