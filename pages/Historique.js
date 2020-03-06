@@ -2,11 +2,13 @@
 import React, { Component } from 'react';
 
 //import react in our code. 
-import { StyleSheet, View, Text, FlatList, Button} from 'react-native';
+import { StyleSheet, View, Text, FlatList, Alert} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
+import { Button, ThemeProvider, Divider } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-//import all the components we are going to use.
+
 let datas;
 let html = []
 
@@ -15,20 +17,17 @@ const getAllData = () =>{
     return AsyncStorage.multiGet(keys)
       .then((result) => {
         datas = result;
-        console.log("Storage : ",datas)
+        datas.sort().reverse()
         setHtml()
       }).catch((e) =>{
-        //console.log(e);
       });
   });
 }
-
 //AsyncStorage.clear();
 getAllData()
 
 const setHtml = () => {
-  //html = []
-  console.log("Data à afficher : ", datas)
+  html = []
   if (datas != undefined) {
     for (var i=0; i < datas.length; i++) {
       if (html.length <= i) {
@@ -36,44 +35,65 @@ const setHtml = () => {
           {key: datas[i][0], value: datas[i][1]},
         )
       }
-      console.log("DOM : ", html)
     }
   }
 }
 
+
+
 export default class Historique extends Component {
-  
+  state = {
+    uniqueValue: 1
+  }
+  forceRemount = () => {
+    this.setState(({ uniqueValue }) => ({
+      uniqueValue: uniqueValue + 1
+    }));
+  }
   static navigationOptions = {
     title: 'Historique',
+    headerStyle: {
+      backgroundColor: '#557aca',
+      borderBottomColor: 'gainsboro',
+
+      //Sets Header color
+    },
+    headerTintColor: '#fff',
+    //Sets Header text color
+    headerTitleStyle: {
+      fontWeight: 'bold',
+      //Sets Header text style
+  },
     //Sets Header text of Status Bar
   };
-
-
-  /*
-  constructor () {
-    super()
-  }
-  */
-  // UNSAFE_componentWillMount(){
-  //   getAllData()
-  //   setHtml()
-  // }
 
   render() {
 
     getAllData()
+    
     const { navigate } = this.props.navigation;
   
     return (
       <View style={styles.container}>
         <FlatList
           data={html}
-          renderItem={({item}) => <View><Text style={styles.item}>{item.value}</Text><Button
-          title="Press me"
-          //onPress={() => Alert.alert('Simple Button pressed')}
-        /></View>}
-          
+          renderItem={
+            ({item}) => 
+              <View style={styles.item}><Text style={styles.itemText}>{item.value}</Text>
+                <ThemeProvider>
+                  <Button style={styles.button}
+                    title="Visualiser"
+                    titleStyle={{fontSize: 15}}
+                    onPress={() => Alert.alert("Info",item.value)}
+                  />
+                </ThemeProvider>
+              </View>
+          }
         />
+      <Button
+      title="Actualiser"
+      titleStyle={{fontSize: 15}}
+      onPress={this.forceRemount} />
       </View>
     );
   }
@@ -82,18 +102,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    //margin:50,
-    //alignItems: 'center',
-    //justifyContent: 'center',
   },
   item: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'gainsboro',
+    backgroundColor: 'whitesmoke'
+  },
+  itemText: {
     padding: 10,
-    fontSize: 18,
-    //height: 44,
-    borderBottomWidth: 2,
-    borderBottomColor: 'red',
+    fontSize: 15,
+    textAlign: "center"
   },
   show: {
     textAlign: "right"
+  },
+  button: {
+    marginBottom: 10,
+    alignItems: "center",
+    fontSize: 15,
   }
 });

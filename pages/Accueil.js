@@ -6,6 +6,7 @@ import { Text, View, Linking, TouchableHighlight, PermissionsAndroid, Platform, 
 // import all basic components
 import { CameraKitCameraScreen, } from 'react-native-camera-kit';
 import AsyncStorage from '@react-native-community/async-storage';
+import { Tile } from 'react-native-elements';
 let nbDatas = 0;
 let nbKey = '';
 const saveCode = async (value) =>{
@@ -13,6 +14,7 @@ const saveCode = async (value) =>{
     getAllData()
     nbKey = nbDatas + "";
     nbDatas++;
+    console.log(nbKey);
     await AsyncStorage.setItem(nbKey, value);
   } catch (e) {
     console.log(e);
@@ -33,10 +35,10 @@ const getAllData = () =>{
 //import CameraKitCameraScreen we are going to use.
 export default class App extends Component {
 static navigationOptions = {
-    title: 'Accueil',
+    title: 'GoStyle QRCodeScanner',
     //Sets Header text of Status Bar
     headerStyle: {
-        backgroundColor: '#f4511e',
+        backgroundColor: '#557aca',
         //Sets Header color
     },
     headerTintColor: '#fff',
@@ -73,8 +75,8 @@ static navigationOptions = {
         try {
           const granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.CAMERA,{
-              'title': 'CameraExample App Camera Permission',
-              'message': 'CameraExample App needs access to your camera '
+              'title': 'Erreur',
+              'message': 'L\'application à besoin d\'un accès à la caméra pour fonctionner.'
             }
           )
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -82,7 +84,7 @@ static navigationOptions = {
             that.setState({ qrvalue: '' });
             that.setState({ opneScanner: true });
           } else {
-            alert("CAMERA permission denied");
+            alert("Permission refusée");
           }
         } catch (err) {
           alert("Camera permission err",err);
@@ -103,13 +105,18 @@ static navigationOptions = {
     if (!this.state.opneScanner) {
       return (
         <View style={styles.container}>
-            <Text style={styles.heading}>React Native QR Code Example</Text>
-            <Text style={styles.simpleText}>{this.state.qrvalue ? 'Scanned QR Code: '+this.state.qrvalue : ''}</Text>
+          <Tile
+            imageSrc={require('../img/tile.png')}
+            title=""
+            featured
+            activeOpacity={1}
+                      />
+            <Text style={styles.simpleText}>{this.state.qrvalue ? 'QR code scanné: '+this.state.qrvalue : ''}</Text>
             {this.state.qrvalue.includes("http") ? 
               <TouchableHighlight
                 onPress={() => this.onOpenlink()}
                 style={styles.button}>
-                  <Text style={{ color: '#FFFFFF', fontSize: 12 }}>Open Link</Text>
+                  <Text style={{ color: '#FFFFFF', fontSize: 12 }}>Ouvrir le lien</Text>
               </TouchableHighlight>
               : null
             }
@@ -117,7 +124,7 @@ static navigationOptions = {
               onPress={() => this.onOpneScanner()}
               style={styles.button}>
                 <Text style={{ color: '#FFFFFF', fontSize: 12 }}>
-                Open QR Scanner
+                Scanner un QR code
                 </Text>
             </TouchableHighlight>
 
@@ -130,7 +137,7 @@ static navigationOptions = {
             </TouchableHighlight>
 
             <TouchableHighlight
-              onPress={() => navigate('Historique')}
+              onPress={() =>  navigate('Historique')}
               style={styles.button}>
                 <Text style={{ color: '#FFFFFF', fontSize: 12 }}>
                 Historique

@@ -7,6 +7,16 @@ import { StyleSheet, View, Text} from 'react-native';
 export default class SecondPage extends Component {
   static navigationOptions = {
     title: 'Liste des promotions',
+    headerStyle: {
+      backgroundColor: '#557aca',
+      //Sets Header color
+    },
+    headerTintColor: '#fff',
+    //Sets Header text color
+    headerTitleStyle: {
+      fontWeight: 'bold',
+      //Sets Header text style
+    },
     //Sets Header text of Status Bar
   };
   render() {
