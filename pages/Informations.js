@@ -25,7 +25,6 @@ let getJSON = function(url, callback) {
 
 
 
-
 export default class Informations extends Component {
   static navigationOptions = {
     title: 'Informations',
@@ -43,16 +42,23 @@ export default class Informations extends Component {
     //Sets Header text of Status Bar
   };
 
-  
+    state = {
+    uniqueValue: 1
+  }
+  forceRemount = () => {
+    this.setState(({ uniqueValue }) => ({
+      uniqueValue: uniqueValue + 1
+    }));
+  }
+
+
+
 
   render() {
-
-    const { navigate } = this.props.navigation;
 
     const { params } = this.props.navigation.state;
     const itemValue = params ? params.itemValue : null;
     const itemId = params ? params.itemId : null;
-
     getJSON('http://elarnes.fr/get_qrcode.php?idQrCode=' + JSON.stringify(itemValue).replace(/['"]+/g, '').split(';')[1],
     function(err, data) {
       if (err !== null) {
@@ -66,7 +72,7 @@ export default class Informations extends Component {
       <View style={styles.container}>
         <QRCode
                   //QR code value
-                  value={JSON.stringify(itemValue).replace(/['"]+/g, '')}
+                  value={"sdbwfhjk"}
                   //size of QR Code
                   size={250}
                   //Color of the QR Code (Optional)
@@ -90,6 +96,11 @@ export default class Informations extends Component {
                 {tabCode["description"]}
                 
                 </Text>
+
+                <Button
+      title="Actualiser"
+      titleStyle={{fontSize: 15}}
+      onPress={this.forceRemount} />
       </View>
     );
   }
