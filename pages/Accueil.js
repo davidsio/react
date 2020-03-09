@@ -63,9 +63,15 @@ static navigationOptions = {
   }
   onBarcodeScan(qrvalue) {
     //called after te successful scanning of QRCode/Barcode
-    saveCode(qrvalue);
-    this.setState({ qrvalue: qrvalue });
-    this.setState({ opneScanner: false });
+    if (qrvalue.includes("Test")) {
+      saveCode(qrvalue);
+      this.setState({ qrvalue: qrvalue });
+      this.setState({ error: undefined });
+      this.setState({ opneScanner: false });
+    } else {
+      this.setState({ error: qrvalue });
+      this.setState({ opneScanner: false });
+    }
   }
   onOpneScanner() {
     var that =this;
@@ -111,7 +117,7 @@ static navigationOptions = {
             featured
             activeOpacity={1}
                       />
-            <Text style={styles.simpleText}>{this.state.qrvalue ? 'QR code scanné: '+this.state.qrvalue : ''}</Text>
+            <Text style={styles.simpleText}>{this.state.error ? 'Mauvais type de code: '+this.state.error : ''}</Text>
             {this.state.qrvalue.includes("http") ? 
               <TouchableHighlight
                 onPress={() => this.onOpenlink()}

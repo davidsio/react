@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, FlatList, Alert} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Button, ThemeProvider, Divider } from 'react-native-elements';
+import { Button, ThemeProvider, Overlay } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
@@ -52,6 +52,7 @@ export default class Historique extends Component {
   }
   static navigationOptions = {
     title: 'Historique',
+    headerBackTitle: 'Retour',
     headerStyle: {
       backgroundColor: '#557aca',
       borderBottomColor: 'gainsboro',
@@ -84,7 +85,10 @@ export default class Historique extends Component {
                   <Button style={styles.button}
                     title="Visualiser"
                     titleStyle={{fontSize: 15}}
-                    onPress={() => Alert.alert("Info",item.value)}
+                    onPress={() => navigate('Informations', {
+                      itemId: item.key,
+                      itemValue: item.value
+                    })}
                   />
                 </ThemeProvider>
               </View>
@@ -122,3 +126,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
   }
 });
+
+/*
+                  <Button style={styles.button}
+                    title="Visualiser"
+                    titleStyle={{fontSize: 15}}
+                    onPress={() => Alert.alert("Info",item.value)}
+                  />
+*/
