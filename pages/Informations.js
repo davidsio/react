@@ -1,12 +1,6 @@
-//This is an example code for Navigator// 
 import React, { Component } from 'react';
-//import react in our code. 
 import { StyleSheet, View, Text} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-
-//import all the components we are going to use.
-
-
 
 let getJSON = function(url, callback) {
   var xhr = new XMLHttpRequest();
@@ -71,23 +65,13 @@ export default class Informations extends Component {
     return (
       <View style={styles.container}>
         <QRCode
-                  //QR code value
                   value={"sdbwfhjk"}
-                  //size of QR Code
                   size={250}
-                  //Color of the QR Code (Optional)
                   color="black"
-                  //Background Color of the QR Code (Optional)
                   backgroundColor="white"
-                  //Logo of in the center of QR Code (Optional)
-
-                  //Center Logo size  (Optional)
                   logoSize={30}
-                  //Center Logo margin (Optional)
                   logoMargin={2}
-                  //Center Logo radius (Optional)
                   logoBorderRadius={15}
-                  //Center Logo background (Optional)
                   logoBackgroundColor="yellow"
                 />
                 <Text>
