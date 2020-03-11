@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text} from 'react-native';
+import { StyleSheet, View, Text, Button} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
+
+let code = [];
+
 
 let getJSON = function(url, callback) {
   var xhr = new XMLHttpRequest();
@@ -35,33 +38,42 @@ export default class Informations extends Component {
     },
     //Sets Header text of Status Bar
   };
-
-    state = {
-    uniqueValue: 1
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+        loaded: false,
+        code: []
+    };
   }
-  forceRemount = () => {
-    this.setState(({ uniqueValue }) => ({
-      uniqueValue: uniqueValue + 1
-    }));
+
+  componentDidMount() {
+    const { params } = this.props.navigation.state;
+    const itemValue = params ? params.itemValue : null;
+
+    getJSON('http://elarnes.fr/get_qrcode.php?idQrCode=' + JSON.stringify(itemValue).replace(/['"]+/g, '').split(';')[1],
+        (err, data) => {
+            if (err !== null) {
+                console.log('Something went wrong: ' + err);
+            } else {
+                this.setState({
+                  code: data[0],
+                  loaded: true,
+
+                })
+            }
+        }
+    );
   }
 
-
-
+  componentDidUpdate(nextProps) {
+    //this will triggered when the props changes - not needed for this
+  }
 
   render() {
 
-    const { params } = this.props.navigation.state;
-    const itemValue = params ? params.itemValue : null;
-    const itemId = params ? params.itemId : null;
-    getJSON('http://elarnes.fr/get_qrcode.php?idQrCode=' + JSON.stringify(itemValue).replace(/['"]+/g, '').split(';')[1],
-    function(err, data) {
-      if (err !== null) {
-        console.log('Something went wrong: ' + err);
-      } else {
-        tabCode = data[0]
-      }
-    });
-
+    if (!this.state.loaded)
+        return <View />
     return (
       <View style={styles.container}>
         <QRCode
@@ -76,15 +88,10 @@ export default class Informations extends Component {
                 />
                 <Text>
                 
-                {tabCode["code"]}
-                {tabCode["description"]}
+                {this.state.code["code"]}
+                {this.state.code["description"]}
                 
                 </Text>
-
-                <Button
-      title="Actualiser"
-      titleStyle={{fontSize: 15}}
-      onPress={this.forceRemount} />
       </View>
     );
   }

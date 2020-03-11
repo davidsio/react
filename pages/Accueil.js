@@ -32,6 +32,21 @@ const getAllData = () =>{
   });
 }
 
+let getJSON = function(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.responseType = 'json';
+  xhr.onload = function() {
+    var status = xhr.status;
+    if (status === 200) {
+      callback(null, xhr.response);
+    } else {
+      callback(status, xhr.response);
+    }
+  };
+  xhr.send();
+};
+
 //import CameraKitCameraScreen we are going to use.
 export default class App extends Component {
 static navigationOptions = {
@@ -54,19 +69,30 @@ static navigationOptions = {
       //variable to hold the qr value
       qrvalue: '',
       opneScanner: false,
+      codePromo: []
     };
-  }
-  onOpenlink() {
-    //Function to open URL, If scanned 
-    Linking.openURL(this.state.qrvalue);
-    //Linking used to open the URL in any browser that you have installed
   }
   onBarcodeScan(qrvalue) {
     //called after te successful scanning of QRCode/Barcode
-    if (qrvalue.includes("Test")) {
+    if (qrvalue.includes("gostyle")) {
       saveCode(qrvalue);
       this.setState({ qrvalue: qrvalue });
       this.setState({ error: undefined });
+
+
+      console.log(qrvalue.split(';')[1])
+      getJSON('http://elarnes.fr/get_qrcode.php?idQrCode=' + qrvalue.split(';')[1],
+        (err, data) => {
+            if (err !== null) {
+                console.log('Something went wrong: ' + err);
+            } else {
+                this.setState({
+                  codePromo: data[0],
+                })
+            }
+        }
+      );
+
       this.setState({ opneScanner: false });
     } else {
       this.setState({ error: qrvalue });
@@ -109,6 +135,7 @@ static navigationOptions = {
     let displayModal;
     //If qrvalue is set then return this view
     if (!this.state.opneScanner) {
+      console.log(this.state.qrvalue[1]);
       return (
         <View style={styles.container}>
           <Tile
@@ -117,15 +144,13 @@ static navigationOptions = {
             featured
             activeOpacity={1}
                       />
-            <Text style={styles.simpleText}>{this.state.error ? 'Mauvais type de code: '+this.state.error : ''}</Text>
-            {this.state.qrvalue.includes("http") ? 
-              <TouchableHighlight
-                onPress={() => this.onOpenlink()}
-                style={styles.button}>
-                  <Text style={{ color: '#FFFFFF', fontSize: 12 }}>Ouvrir le lien</Text>
-              </TouchableHighlight>
-              : null
-            }
+            <Text style={styles.simpleText}>
+              <Text>{this.state.error ? 'QRCode non reconnu' : ''}</Text>
+
+            <Text style={{fontWeight: "bold"}}>{this.state.qrvalue ? this.state.codePromo["code"] : ''}</Text>
+            <Text>{this.state.qrvalue ? "\n\n" + this.state.codePromo["description"] : ''}</Text>
+            </Text>
+  
             <TouchableHighlight
               onPress={() => this.onOpneScanner()}
               style={styles.button}>
@@ -133,15 +158,7 @@ static navigationOptions = {
                 Scanner un QR code
                 </Text>
             </TouchableHighlight>
-
-            <TouchableHighlight
-              onPress={() => navigate('Promotions')}
-              style={styles.button}>
-                <Text style={{ color: '#FFFFFF', fontSize: 12 }}>
-                Promotions en cours
-                </Text>
-            </TouchableHighlight>
-
+            
             <TouchableHighlight
               onPress={() =>  navigate('Historique')}
               style={styles.button}>
@@ -201,7 +218,7 @@ const styles = StyleSheet.create({
   simpleText: { 
     color: 'black', 
     fontSize: 20, 
-    alignSelf: 'center', 
+    textAlign: "center",
     padding: 10, 
     marginTop: 16
   }

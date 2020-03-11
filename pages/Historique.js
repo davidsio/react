@@ -73,7 +73,6 @@ export default class Historique extends Component {
     getAllData()
     
     const { navigate } = this.props.navigation;
-  
     return (
       <View style={styles.container}>
         <FlatList
@@ -86,7 +85,6 @@ export default class Historique extends Component {
                     title="Visualiser"
                     titleStyle={{fontSize: 15}}
                     onPress={() => navigate('Informations', {
-                      itemId: item.key,
                       itemValue: item.value
                     })}
                   />
