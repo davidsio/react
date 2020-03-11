@@ -59,7 +59,6 @@ export default class Informations extends Component {
                 this.setState({
                   code: data[0],
                   loaded: true,
-
                 })
             }
         }

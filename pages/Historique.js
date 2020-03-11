@@ -12,6 +12,21 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 let datas;
 let html = []
 
+let getJSON = function(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.responseType = 'json';
+  xhr.onload = function() {
+    var status = xhr.status;
+    if (status === 200) {
+      callback(null, xhr.response);
+    } else {
+      callback(status, xhr.response);
+    }
+  };
+  xhr.send();
+};
+
 const getAllData = () =>{
   AsyncStorage.getAllKeys().then((keys) => {
     return AsyncStorage.multiGet(keys)
@@ -31,6 +46,19 @@ const setHtml = () => {
   if (datas != undefined) {
     for (var i=0; i < datas.length; i++) {
       if (html.length <= i) {
+
+        getJSON('http://elarnes.fr/get_qrcode.php?idQrCode=' + JSON.stringify(datas[i][1]).replace(/['"]+/g, '').split(';')[1],
+        (err, data) => {
+            if (err !== null) {
+                console.log('Something went wrong: ' + err);
+            } else {
+                console.log(datas);
+               // console.log(data[0]["code"]);
+            }
+          }
+        );
+        console.log(datas[i][0]);
+
         html.push(
           {key: datas[i][0], value: datas[i][1]},
         )
