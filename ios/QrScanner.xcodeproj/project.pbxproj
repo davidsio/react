@@ -683,7 +683,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 83104A4523B7ECB1B21CB93C /* Pods-QrScanner.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -707,7 +707,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A9DB22D66EC9F0A58ABF2F46 /* Pods-QrScanner.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

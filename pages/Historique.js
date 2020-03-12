@@ -12,6 +12,33 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 let datas;
 let html = []
 
+const getAllData = () =>{
+  AsyncStorage.getAllKeys().then((keys) => {
+    return AsyncStorage.multiGet(keys)
+      .then((result) => {
+        datas = result;
+        datas.sort().reverse()
+        setHtml()
+      }).catch((e) =>{
+      });
+  });
+}
+//AsyncStorage.clear();
+//getAllData()
+
+const setHtml = () => {
+  html = []
+  if (datas != undefined) {
+    for (var i=0; i < datas.length; i++) {
+      if (html.length <= i) {
+        html.push(
+          {key: datas[i][0], value: datas[i][1].split(';')[1]},
+        )
+      }
+    }
+  }
+}
+
 let getJSON = function(url, callback) {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
@@ -27,57 +54,10 @@ let getJSON = function(url, callback) {
   xhr.send();
 };
 
-const getAllData = () =>{
-  AsyncStorage.getAllKeys().then((keys) => {
-    return AsyncStorage.multiGet(keys)
-      .then((result) => {
-        datas = result;
-        datas.sort().reverse()
-        setHtml()
-      }).catch((e) =>{
-      });
-  });
-}
-//AsyncStorage.clear();
-getAllData()
-
-const setHtml = () => {
-  html = []
-  if (datas != undefined) {
-    for (var i=0; i < datas.length; i++) {
-      if (html.length <= i) {
-
-        getJSON('http://elarnes.fr/get_qrcode.php?idQrCode=' + JSON.stringify(datas[i][1]).replace(/['"]+/g, '').split(';')[1],
-        (err, data) => {
-            if (err !== null) {
-                console.log('Something went wrong: ' + err);
-            } else {
-                console.log(datas);
-               // console.log(data[0]["code"]);
-            }
-          }
-        );
-        console.log(datas[i][0]);
-
-        html.push(
-          {key: datas[i][0], value: datas[i][1]},
-        )
-      }
-    }
-  }
-}
-
 
 
 export default class Historique extends Component {
-  state = {
-    uniqueValue: 1
-  }
-  forceRemount = () => {
-    this.setState(({ uniqueValue }) => ({
-      uniqueValue: uniqueValue + 1
-    }));
-  }
+
   static navigationOptions = {
     title: 'Historique',
     headerBackTitle: 'Retour',
@@ -96,11 +76,37 @@ export default class Historique extends Component {
     //Sets Header text of Status Bar
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+        loaded: false,
+        code: []
+    };
+  }
+
+  componentDidMount() {
+
+    getJSON('http://elarnes.fr/get_qrcode.php?idQrCode=MARCODAY',
+    (err, data) => {
+        if (err !== null) {
+            console.log('Something went wrong: ' + err);
+        } else {
+            this.setState({
+              code: data[0],
+              loaded: true,
+            })
+        }
+      }
+    );
+  }
+
   render() {
 
     getAllData()
     
     const { navigate } = this.props.navigation;
+    if (!this.state.loaded)
+      return <View />
     return (
       <View style={styles.container}>
         <FlatList
@@ -120,10 +126,6 @@ export default class Historique extends Component {
               </View>
           }
         />
-      <Button
-      title="Actualiser"
-      titleStyle={{fontSize: 15}}
-      onPress={this.forceRemount} />
       </View>
     );
   }

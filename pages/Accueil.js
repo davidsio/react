@@ -2,7 +2,7 @@
 //This is an example code to Scan QR code//
 import React, { Component } from 'react';
 //import react in our code.
-import { Text, View, Linking, TouchableHighlight, PermissionsAndroid, Platform, StyleSheet, Button} from 'react-native';
+import { Text, View, Linking, TouchableHighlight, PermissionsAndroid, Platform, StyleSheet, Button, Alert} from 'react-native';
 // import all basic components
 import { CameraKitCameraScreen, } from 'react-native-camera-kit';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -80,7 +80,7 @@ static navigationOptions = {
       this.setState({ error: undefined });
 
 
-      console.log(qrvalue.split(';')[1])
+      console.log('ici' + qrvalue.split(';')[1])
       getJSON('http://elarnes.fr/get_qrcode.php?idQrCode=' + qrvalue.split(';')[1],
         (err, data) => {
             if (err !== null) {
@@ -89,6 +89,7 @@ static navigationOptions = {
                 this.setState({
                   codePromo: data[0],
                 })
+                console.log(this.state.codePromo);
             }
         }
       );
@@ -130,6 +131,7 @@ static navigationOptions = {
       that.setState({ opneScanner: true });
     }    
   }
+
   render() {
     const { navigate } = this.props.navigation;
     let displayModal;
@@ -164,6 +166,22 @@ static navigationOptions = {
               style={styles.button}>
                 <Text style={{ color: '#FFFFFF', fontSize: 12 }}>
                 Historique
+                </Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              onPress={() =>  Alert.alert(
+                'Confirmer',
+                'Êtes-vous sur de vouloir réinitialiser les données',
+                [
+                  {text: 'Oui', onPress: () => {AsyncStorage.clear(); this.setState({ qrvalue: "" }) }},
+                  {text: 'Non'},
+                ],
+                {cancelable: false},
+              )}
+              style={styles.button}>
+                <Text style={{ color: '#FFFFFF', fontSize: 12 }}>
+                Réinitialiser les données
                 </Text>
             </TouchableHighlight>
         </View>

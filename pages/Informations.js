@@ -50,8 +50,8 @@ export default class Informations extends Component {
   componentDidMount() {
     const { params } = this.props.navigation.state;
     const itemValue = params ? params.itemValue : null;
-
-    getJSON('http://elarnes.fr/get_qrcode.php?idQrCode=' + JSON.stringify(itemValue).replace(/['"]+/g, '').split(';')[1],
+    console.log(itemValue);
+    getJSON('http://elarnes.fr/get_qrcode.php?idQrCode=' + JSON.stringify(itemValue).replace(/['"]+/g, ''),
         (err, data) => {
             if (err !== null) {
                 console.log('Something went wrong: ' + err);
@@ -76,7 +76,7 @@ export default class Informations extends Component {
     return (
       <View style={styles.container}>
         <QRCode
-                  value={"sdbwfhjk"}
+                  value={"gostyle;" + this.state.code["code"]}
                   size={250}
                   color="black"
                   backgroundColor="white"
@@ -85,12 +85,16 @@ export default class Informations extends Component {
                   logoBorderRadius={15}
                   logoBackgroundColor="yellow"
                 />
-                <Text>
                 
-                {this.state.code["code"]}
-                {this.state.code["description"]}
                 
-                </Text>
+                
+
+            <Text style={styles.simpleText}>
+
+            <Text style={{fontWeight: "bold"}}>{this.state.code["code"]}</Text>
+            <Text>{ "\n\n" + this.state.code["description"]}</Text>
+            </Text>
+                
       </View>
     );
   }
@@ -101,6 +105,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center'
-
   },
+  simpleText: { 
+    color: 'black', 
+    fontSize: 20, 
+    textAlign: "center",
+    padding: 10, 
+    marginTop: 16
+  }
 });
